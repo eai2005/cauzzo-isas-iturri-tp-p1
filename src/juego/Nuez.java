@@ -8,7 +8,7 @@ import entorno.Herramientas;
 
 public class Nuez {
 
-	double x, y, escala, dxA;
+	double x, y, escala, dxA, vida;
 	Image img;
 	Entorno e;
 	boolean seleccion, plantada, seleccionadaParaMover;
@@ -24,6 +24,7 @@ public class Nuez {
 		this.plantada = false;
 		this.colorSeleccion = new Color(200, 200, 20, 120);
 		this.dxA = 0;
+		this.vida=30;
 	}
 	
 	public double rotacionSeleccion()

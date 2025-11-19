@@ -18,7 +18,7 @@ public class Juego extends InterfaceJuego
 	
 	private Entorno entorno;
 	Cuadricula c;
-	Image fondoInterno, panelSuperior;
+	Image fondoInterno, panelSuperior, victoria;
 	int ancho, alto;
 	
 	Regalo reg;
@@ -36,7 +36,7 @@ public class Juego extends InterfaceJuego
 	
 	Zombie[] zombies;
 	double contadorTick=0;
-	double tickXZombie=300;
+	double tickXZombie=120;
 	int zombiesEliminados;
 	int zombiesRestantes;
 	
@@ -48,8 +48,11 @@ public class Juego extends InterfaceJuego
 	Image imagen;
 	
 	int tiempoFuego;
+	boolean plantarFuego;
 	int tiempoHuracol;
+	boolean plantarHuracol;
 	int tiempoNuez;
+	boolean plantarNuez;
 	
 	
 	
@@ -70,7 +73,7 @@ public class Juego extends InterfaceJuego
 		//Cargar Cuadricula
 		this.c = new Cuadricula(160,178,entorno);
 		//Info de coordenadas de cuadricula
-		c.imprimirCoordenadasCeldas();
+		//c.imprimirCoordenadasCeldas();
 		
 		//Cargar imagenes de fondo y banner superior
 		this.fondoInterno = Herramientas.cargarImagen("Imagenes/casaFondo2.jpg");
@@ -96,31 +99,34 @@ public class Juego extends InterfaceJuego
 		this.bolasAzul = new BolaAzul[500];
 		
 		//Zombies
-		this.zombies=new Zombie[50];
+		this.zombies=new Zombie[25];
 		this.zombiesEliminados=0;
-		this.zombiesRestantes=50;
+		this.zombiesRestantes=zombies.length;
 		
 		//Tumbas
-		this.tumbas=new Tumba[20];
-		this.probabilidad=1; //30% de probabilidad
+		this.tumbas=new Tumba[50];
+		this.probabilidad=0.5; //30% de probabilidad
 		
 		//imagen de cuando perdes
 		this.imagen= Herramientas.cargarImagen("Imagenes/GameOver.png");
 		
 		//tiempos de colocacion de plantas
-		this.tiempoFuego=5;
-		this.tiempoHuracol=5;
-		this.tiempoNuez=7;
+		this.tiempoFuego=300;
+		this.tiempoHuracol=300;
+		this.tiempoNuez=420;
+		
+		//imagen victoria
+		this.victoria=Herramientas.cargarImagen("Imagenes/victoria1.jpg");
 		
 		// Inicia el juego!
 		this.entorno.iniciar();
 		
 		
 		//Info de celdas
-		double ancho = c.getAnchoCelda();
-		double alto = c.getAltoCelda();
-		System.out.println("Ancho de celda: " + ancho);
-		System.out.println("Alto de celda: " + alto);
+		//double ancho = c.getAnchoCelda();
+		//double alto = c.getAltoCelda();
+		//System.out.println("Ancho de celda: " + ancho);
+		//System.out.println("Alto de celda: " + alto);
 	}
 
 	
@@ -213,7 +219,8 @@ public class Juego extends InterfaceJuego
 			             // Creo una nueva planta disponible en el panel
 				            for (int i = 0; i < huracoles.length; i++) {
 				                if (huracoles[i] == null) {
-				                    huracoles[i] = new Huracol(378, 84, entorno);
+				                	plantarHuracol = true;
+				                    tiempoHuracol = 120;   // lo que quieras, frames
 				                    break;
 				                }
 				            }
@@ -230,10 +237,24 @@ public class Juego extends InterfaceJuego
 			            
 			        }
 			    }
-			}
+		    }
 		}
-		
-		
+		if (plantarHuracol) {
+		    tiempoHuracol--;
+
+		    if (tiempoHuracol <= 0) {
+		        // Cooldown completado → reponer carta
+		        for (int i = 0; i < huracoles.length; i++) {
+		            if (huracoles[i] == null) {
+		                huracoles[i] = new Huracol(378, 84, entorno);
+		                break;
+		            }
+		        }
+
+		        plantarHuracol = false;
+		    }
+		}		
+
 		// ----- Seccion nueces -----
 		
 		
@@ -292,7 +313,8 @@ public class Juego extends InterfaceJuego
 			             // Creo una nueva planta disponible en el panel
 				            for (int i = 0; i < nueces.length; i++) {
 				                if (nueces[i] == null) {
-				                    nueces[i] = new Nuez(269.6, 88, entorno);
+				                    tiempoNuez=400;
+				                    plantarNuez=true;
 				                    break;
 				                }
 				            }
@@ -311,7 +333,18 @@ public class Juego extends InterfaceJuego
 			    }
 			}
 		}
-		
+		if(plantarNuez) {
+			tiempoNuez--;
+		}
+		if(tiempoNuez<=0) {
+			for(int i=0; i<nueces.length; i++) {
+				if(nueces[i]==null) {
+					nueces[i] = new Nuez(269.6, 88, entorno);
+					break;
+				}
+			}
+			plantarNuez=false;
+		}
 		
 		// ----- Seccion de planta lanza fuego -----
 		
@@ -376,7 +409,8 @@ public class Juego extends InterfaceJuego
 				            {
 				                if (fuego[i] == null) 
 				                {
-				                    fuego[i] = new Planta(160, 68, entorno);
+				                   plantarFuego=true;
+				                   tiempoFuego=120;
 				                    break;
 				                }
 				            }
@@ -394,7 +428,18 @@ public class Juego extends InterfaceJuego
 			    }
 			}
 		}
-		
+		if(plantarFuego) {
+			tiempoFuego--;
+		}
+		if(tiempoFuego<=0) {
+			for(int i=0; i<fuego.length; i++) {
+				if(fuego[i]==null) {
+					fuego[i] = new Planta(160, 68, entorno);
+					break;
+				}
+			}
+			plantarFuego=false;
+		}
 		
 		// -----Seccion desplazamiento de las plantas con las teclas-------
 		
@@ -629,7 +674,9 @@ public class Juego extends InterfaceJuego
 							bolas[j]=null;
 							if(z.vida<=0)
 							{
+								System.out.println("Zombie muerto en: x=" + z.x + " y=" + z.y);
 								double[] centro=c.obtenerCentroCeldaMasCercana(z.x, z.y);
+								System.out.println("Centro devuelto: " + centro[0] + ", " + centro[1]);
 								zombies[i]=null;
 								zombiesEliminados++;
 								zombiesRestantes--;
@@ -642,7 +689,7 @@ public class Juego extends InterfaceJuego
 										}
 									}
 								}
-								
+								break;
 							}
 							break;
 						}
@@ -785,8 +832,14 @@ public class Juego extends InterfaceJuego
 							if(fuego[p]!=null) {
 								  double dx = Math.abs(zombies[z].x - fuego[p].x);
 					              double dy = Math.abs(zombies[z].y - fuego[p].y);
-					              if(dx<30 && dy<30) {
-					            	  fuego[p]=null;
+					              if(dx<50 && dy<50) {
+					            	  //si zombie esta lo suficiente cerca de planta fuego resta vida y vuelve unos x para adelante
+					            	  fuego[p].vida--;
+					            	  zombies[z].x+=50;
+					            	  if(fuego[p].vida<=0) {
+					            		  fuego[p]=null;
+					            	  }
+					            	  
 					              }
 							}	
 						}
@@ -799,8 +852,13 @@ public class Juego extends InterfaceJuego
 							if(huracoles[p]!=null) {
 								  double dx = Math.abs(zombies[z].x - huracoles[p].x);
 					              double dy = Math.abs(zombies[z].y - huracoles[p].y);
-					              if(dx<30 && dy<30) {
-					            	  huracoles[p]=null;
+					              if(dx<60 && dy<60) {
+					            	  //si zombie esta lo suficiente cerca de los huracoles resta vida y vuelve unos x para adelante
+					            	  huracoles[p].vida--;
+					            	  zombies[z].x+=50;
+					            	  if(huracoles[p].vida<=0) {
+					            		  huracoles[p]=null;
+					            	  }
 					              }
 							}	
 						}
@@ -813,24 +871,30 @@ public class Juego extends InterfaceJuego
 							if(nueces[p]!=null) {
 								  double dx = Math.abs(zombies[z].x - nueces[p].x);
 					              double dy = Math.abs(zombies[z].y - nueces[p].y);
-					              if(dx<30 && dy<30) {
-					            	  nueces[p]=null;
+					              //si zombie esta lo suficiente cerca de la nuez resta vida y vuelve unos x para adelante
+					              if(dx<50 && dy<50) {
+					            	  nueces[p].vida--;
+					            	  zombies[z].x+=50;
+					            	  if(nueces[p].vida<=0) {
+					            		  nueces[p]=null;
+					            	  }
 					              }
 							}	
 						}
 					}
 				}
-				
-		//contador para poner las plantas
+				if(zombiesRestantes==0) {
+					perdio=true;
+				}
 				
 		
 			
-		}else {//si el zombie toca el regalo mostrar esto
+		}else {if(zombiesRestantes==0 && perdio){
+				entorno.dibujarImagen(victoria, 600, 300, 0, 1);
+		}else {
 			entorno.dibujarImagen(imagen,600,300,0,1.7);
 			entorno.cambiarFont("arial", 40, Color.white);
-			//entorno.escribirTexto("Presiona ESPACIO para volver a jugar", 300, 500);
-			//if(entorno.sePresiono(entorno.TECLA_ESPACIO) ) {
-				//perdio=false;
+		}
 			}
 		
 	

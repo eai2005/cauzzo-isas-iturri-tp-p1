@@ -14,9 +14,9 @@ public class Tumba {
 		this.x=x;
 		this.y=y;
 		this.e=e;
-		this.Img=Herramientas.cargarImagen("Imagenes/Tumba.jpg");
-		this.escala=0.25;
-		this.vida=5;
+		this.Img=Herramientas.cargarImagen("Imagenes/TumbaB.png");
+		this.escala=0.17;
+		this.vida=2;
 	}
 	public void dibujar() {
 		e.dibujarImagen(this.Img,this.x, this.y, 0, this.escala);

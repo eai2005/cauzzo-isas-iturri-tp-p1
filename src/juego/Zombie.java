@@ -15,12 +15,12 @@ public class Zombie {
 	public Zombie(double x, double y, Entorno e) {
 		this.x=x;
 		this.y=y;
-		this.escala=0.78;
+		this.escala=0.75;
 		this.e=e;
-		this.velocidadX=5; //0.8
+		this.velocidadX=1; //0.8
 		this.Img=Herramientas.cargarImagen("Imagenes/ZombiePVZ.gif");
 		// Vida y un booleano para verificar si esta muerto el zombie
-		this.vida=2;
+		this.vida=5;
 		this.estaMuerto=false;
 		
 	}
